@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btn">click me</button>
+    <script>
+        const btnDom = document.getElementById('btn')
+        btn.addEventListener('click',()=>{
+            console.log('click1')
+
+        })
+        btn.addEventListener('click',()=>{
+            console.log('click2')
+        })
+
+        const map={}
+        function collect(eventName,fn) {
+            if(!map[eventName]){
+                map[eventName] = []
+            }
+            map[eventName].push(fn)
+        }
+        collect('cp',()=>{
+            console.log('collect cp 1')
+
+        })
+        collect('cp',()=>{
+            console.log('collect cp 2')
+        })
+        console.log(map)
+        function trigger(eventName){
+            map[eventName].forEach(fn=>fn())
+        }
+        trigger('cp')
+
+
+        const dep = {
+            map:{},
+            collect(eventName,fn){
+                if(!this.map[eventName]){
+                    this.map[eventName] = []
+                }
+                this.map[eventName].push(fn)
+            },
+
+            trigger(eventName){
+                this.map[eventName] && this.map[eventName].forEach(fn=>fn())
+            }
+        }
+
+        dep.collect('han',()=>{
+            console.log('han')
+        })
+        dep.collect('li',()=>{
+            console.log('li')
+        })
+        console.log(dep)
+        dep.trigger('han')
+        
+    </script>
+</body>
+</html>

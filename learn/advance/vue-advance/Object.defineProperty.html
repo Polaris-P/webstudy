@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //控制台输入：data.name  --> 小明  触发get
+        //控制台输入：data.name='小黑' -->小黑  触发set
+        //再次输入：data.name -->'小明'  name属性未被彻底修改
+        let data = {
+            name : '小明'
+        }
+        data.name = '小黑'
+        Object.defineProperty(data, 'name', {
+            get(){
+                console.log('name属性被获取')
+                return '小明'
+            },
+            set(newVal){
+                console.log('name属性被设置新值')
+                console.log(newVal)
+            }
+        })
+        //彻底修改解决方案:
+        //1.通过中间值中转get和set之间传递的数据
+        let data1={}
+        _name = '小明'
+        Object.defineProperty(data1, 'name', {
+            get(){
+                console.log('name属性被获取')
+                return _name
+            },
+            set(newVal){
+                console.log('name属性被更改')
+                console.log(newVal)
+                _name=newVal
+            }
+        })
+
+        //2.更加通用的劫持方案:
+        //让里面所有的属性都变成响应式的，
+        //并且get和set方法中对于每个属性值的操作是连通的
+        let data2 = {
+            name: '小明',
+            age: 18,
+            height:180
+        }
+        Object.keys(data2).forEach((key)=>{
+            defineReactive(data2,key,data2[key])
+        })
+
+        function defineReactive(data2,key,value) {
+            Object.defineProperty(data2,key,{
+                get(){
+                    return value
+                },
+                set(newVal){
+                    value=newVal
+                }
+            })
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <p v-text="name"></p>
+        <p v-text="age"></p>
+        <p v-text="name"></p>
+    </div>
+    <script>
+        let data = {
+            name: '柴柴老师',
+            age: 18,
+            height: 180
+        }
+        Object.keys(data).forEach((key)=>{
+            defineReactive(data, key,data[key])
+        })
+        function defineReactive(data, key, value) {
+            Object.defineProperty(data,key,{
+                get(){
+                    return value
+                },
+                set(newVal){
+                    if(newVal===value){
+                        return
+                    }
+                    value = newVal
+                    compile()
+                }
+            })
+        }
+        function compile() {
+            let app = document.getElementById('app')
+            const nodes = app.childNodes
+            nodes.forEach(node=>{
+                if(node.nodeType === 1){
+                    const attrs = node.attributes
+                    Array.from(attrs).forEach(attr =>{
+                        const dirName = attr.nodeName
+                        const dataProp = attr.nodeValue
+                        console.log(dirName,dataProp)
+                        if(dirName === 'v-text'){
+                            console.log(`更新了${dirName}指令,需要更新的属性为${dataProp}`)
+                            node.innerText = data[dataProp]
+                        }
+                    })
+                }
+            })
+        }
+        compile()
+    </script>
+</body>
+</html>

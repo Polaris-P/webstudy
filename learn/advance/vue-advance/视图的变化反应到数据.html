@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="name">
+    </div>
+    <script>
+        let data = {
+            name: '柴柴老师',
+            age: 18,
+            height: 180
+        }
+        Object.keys(data).forEach((key)=>{
+            defineReactive(data,key,data[key])
+        })
+        function defineReactive(data,key,value) {
+            Object.defineProperty(data,key,{
+                get(){
+                    return value
+                },
+                set(newVal){
+                    if(newVal===value){
+                        return
+                    }
+                    value = newVal
+                    compile()
+                }
+            })
+        }
+        function compile(){
+            let app = document.getElementById('app')
+            const nodes = app.childNodes
+            nodes.forEach(node=>{
+                if(node.nodeType === 1){
+                    const attrs = node.attributes
+                    Array.from(attrs).forEach(attr=>{
+                        const dirName = attr.nodeName
+                        const dataProp = attr.nodeValue
+                        if(dirName === 'v-model'){
+                            node.value= data[dataProp]
+                            node.addEventListener('input',(e)=>{
+                                data[dataProp]=e.target.value
+                            })
+                        }
+                    })
+                }
+            })
+        }
+        compile()
+    </script>
+</body>
+</html>
